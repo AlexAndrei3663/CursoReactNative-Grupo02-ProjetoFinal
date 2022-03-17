@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   espacoCartelaMarcada: {
-    backgroundColor: "#8d8d8d",
+    backgroundColor: "#9e9",
     padding: 15,
     borderWidth: 2,
     margin: 2,
