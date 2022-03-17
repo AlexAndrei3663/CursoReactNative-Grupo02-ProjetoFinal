@@ -79,34 +79,34 @@ export default function TelaDoJogo({navigation}) {
             respostaCerta: 1
         },
         {
-            pergunta: "Pergunta 15?",
-            resposta: ["Sim", "Não"],
+            pergunta: "Qual o comando usado para criar um aplicativo React?",
+            resposta: ["npm create-react-app", "expo init", "npx create-react-app", "Nenhuma das alternativas"],
             respostaCerta: 2
         },
         {
-            pergunta: "Pergunta 16?",
-            resposta: ["Sim", "Não"],
+            pergunta: "Para que serve o comando -g?",
+            resposta: ["O comando está errado", "Abreviar o comando get", "Instalar localmente", "Instalar no raiz do sistema"],
             respostaCerta: 3
         },
         {
-            pergunta: "Pergunta 17?",
-            resposta: ["Sim", "Não"],
+            pergunta: "Qual é um uso de um hook?",
+            resposta: ["const [n, setN] = useState()", "const n = [1, 2, 3]"],
             respostaCerta: 0
         },
         {
-            pergunta: "Pergunta 18?",
-            resposta: ["Sim", "Não"],
-            respostaCerta: 1
+            pergunta: "O useState é usado em funções e o this.setState em classes.",
+            resposta: ["Verdadeiro", "Falso"],
+            respostaCerta: 0
         },
         {
-            pergunta: "Pergunta 19?",
-            resposta: ["Sim", "Não"],
-            respostaCerta: 2
-        },
-        {
-            pergunta: "Pergunta 20?",
-            resposta: ["Sim", "Não"],
+            pergunta: "Para que serve uma API?",
+            resposta: ["Enviar requisições", "Aumentar segurança", "Comunicação entre plataformas", "Todas as alternativas"],
             respostaCerta: 3
+        },
+        {
+            pergunta: "Qual o horói mais legal do mundo?",
+            resposta: ["Batman", "Homem Aranha", "Grande Saiyaman", "Homem de Ferro"],
+            respostaCerta: 2
         }
     ]
     const [respostas, setRespostas] = useState([])
@@ -130,11 +130,13 @@ export default function TelaDoJogo({navigation}) {
         <Card style={style.container} >
             <Title style={{alignSelf: 'center', }}>Questão {numeroDaQuestao} de 10</Title>
             
-            <ProgressBar
-                progress={progresso}
-                color={Colors.cyanA700}
-                style={{width: 250, alignSelf: 'center'}}
-            />
+            <View style={{width: 300, alignSelf: 'center'}}>
+                <ProgressBar
+                    progress={progresso}
+                    color={Colors.cyanA700}
+                    style={{width: 300, alignSelf: 'center'}}
+                />
+            </View>
             
             <Card.Content style={{...style.container, backgroundColor: 'white', elevation: 0, }}>
                 {numeroDaQuestao === 1 && <View>
@@ -613,6 +615,7 @@ const style = StyleSheet.create({
     },
     pergunta: {
         marginBottom: 30,
-        textShadowRadius: 1
+        textShadowRadius: 1,
+        alignSelf: 'center'
     }
 })
