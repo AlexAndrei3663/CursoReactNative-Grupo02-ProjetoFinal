@@ -1,12 +1,17 @@
 import { useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { Button, Card, Colors, ProgressBar, Subheading, Title } from "react-native-paper";
+import { FlatList, StyleSheet, View } from "react-native";
+import { Button, Card, Colors, ProgressBar, Subheading, Text, Title } from "react-native-paper";
 import Resultado from "./Resultado";
 
-export default function TelaDoJogo({navigation}) {
+export default function TelaDoJogo({ route, navigation }) {
+
+    let { tema } = route.params;
+
+    const [refresh, setRefresh] = useState(false)
     const [progresso, setProgresso] = useState(0.1)
     const [numeroDaQuestao, setNumeroDaQuestao] = useState(1)
     const [numerosSorteados, setNumerosSorteados] = useState([Math.floor(Math.random() * 20)])
+
     let questoes = [
         {
             pergunta: "Flamengo tem Mundial?",
@@ -74,7 +79,7 @@ export default function TelaDoJogo({navigation}) {
             respostaCerta: 0
         },
         {
-            pergunta: "O que deve ser adiocionado à linha de comando para instalar uma dependência globalmente?",
+            pergunta: "O que deve ser adicionado à linha de comando para instalar uma dependência globalmente?",
             resposta: ["sudo", "--global", "su", "Todas as alternativas"],
             respostaCerta: 1
         },
@@ -111,480 +116,84 @@ export default function TelaDoJogo({navigation}) {
     ]
     const [respostas, setRespostas] = useState([])
     const [resposta10, setResposta10] = useState([])
+    const [questaoAtual, setQuestaoAtual] = useState(questoes[numerosSorteados]) // Estado para armazenar a questão atual do jogo
 
     function sortearQuestoes() {
         let random
         let i = 9
 
-        while(i > 0) {
+        while (i > 0) {
             random = Math.floor(Math.random() * 20)
-            
-            if(!numerosSorteados.includes(random)) {
+
+            if (!numerosSorteados.includes(random)) {
                 numerosSorteados.push(random)
-                return random
+                break
             }
         }
+        setRefresh(!refresh)
+        setQuestaoAtual(questoes[random])
     }
 
-    return(
+    return (
         <Card style={style.container} >
-            <Title style={{alignSelf: 'center', }}>Questão {numeroDaQuestao} de 10</Title>
-            
+            <Title style={{ alignSelf: 'center', }}>Questão {numeroDaQuestao} de 10</Title>
+
             <ProgressBar
                 progress={progresso}
                 color={Colors.cyanA700}
-                style={{width: 250, alignSelf: 'center'}}
+                style={{ width: 250, alignSelf: 'center' }}
             />
-            
-            <Card.Content style={{...style.container, backgroundColor: 'white', elevation: 0, }}>
-                {numeroDaQuestao === 1 && <View>
-                    <Subheading style={style.pergunta}>{questoes[numerosSorteados[0]].pergunta}</Subheading>
+
+            <Card.Content style={{ ...style.container, elevation: 0, shadowColor: tema.backgroundColor}}>
+                <Subheading style={style.pergunta}>{questaoAtual.pergunta}</Subheading>
+
+                <Button
+                    style={{...style.botao, backgroundColor: tema.backgroundColor, shadowColor: tema.backgroundColor}}
+                    mode="contained"
+                    onPress={() => {
+                        setRespostas(resposta => [...resposta, 0])
+                        setProgresso(progresso + 0.1)
+                        setNumeroDaQuestao(numeroDaQuestao + 1)
+                        sortearQuestoes()
+                    }}
+                >{questaoAtual.resposta[0]}</Button>
+                <Button
+                    style={{...style.botao, backgroundColor: tema.backgroundColor, shadowColor: tema.backgroundColor}}
+                    mode="contained"
+                    onPress={() => {
+                        setRespostas(resposta => [...resposta, 1])
+                        setProgresso(progresso + 0.1)
+                        setNumeroDaQuestao(numeroDaQuestao + 1)
+                        sortearQuestoes()
+                    }}
+                >{questaoAtual.resposta[1]}</Button>
+                {questaoAtual.resposta.length > 2 && 
+                <View>
                     <Button
-                        style={style.botao}
+                        style={{...style.botao, backgroundColor: tema.backgroundColor, shadowColor: tema.backgroundColor}}
                         mode="contained"
                         onPress={() => {
-                            setRespostas(resposta => [...resposta, 0])
-                            setProgresso(progresso+0.1)
-                            setNumeroDaQuestao(numeroDaQuestao+1)
+                            setRespostas(resposta => [...resposta, 2])
+                            setProgresso(progresso + 0.1)
+                            setNumeroDaQuestao(numeroDaQuestao + 1)
                             sortearQuestoes()
                         }}
-                    >{questoes[numerosSorteados[0]].resposta[0]}</Button>
+                    >{questaoAtual.resposta[2]}</Button>
                     <Button
-                        style={style.botao}
+                        style={{...style.botao, backgroundColor: tema.backgroundColor, shadowColor: tema.backgroundColor}}
                         mode="contained"
                         onPress={() => {
-                            setRespostas(resposta => [...resposta, 1])
-                            setProgresso(progresso+0.1)
-                            setNumeroDaQuestao(numeroDaQuestao+1)
+                            setRespostas(resposta => [...resposta, 3])
+                            setProgresso(progresso + 0.1)
+                            setNumeroDaQuestao(numeroDaQuestao + 1)
                             sortearQuestoes()
                         }}
-                    >{questoes[numerosSorteados[0]].resposta[1]}</Button>
-                    {questoes[numerosSorteados[0]].resposta.length > 2 && <View>
-                            <Button
-                                style={style.botao}
-                                mode="contained"
-                                onPress={() => {
-                                    setRespostas(resposta => [...resposta, 2])
-                                    setProgresso(progresso+0.1)
-                                    setNumeroDaQuestao(numeroDaQuestao+1)
-                                    sortearQuestoes()
-                                }}
-                            >{questoes[numerosSorteados[0]].resposta[2]}</Button>
-                            <Button
-                                style={style.botao}
-                                mode="contained"
-                                onPress={() => {
-                                    setRespostas(resposta => [...resposta, 3])
-                                    setProgresso(progresso+0.1)
-                                    setNumeroDaQuestao(numeroDaQuestao+1)
-                                    sortearQuestoes()
-                                }}
-                            >{questoes[numerosSorteados[0]].resposta[3]}</Button>
-                        </View>
-                    }
-                </View>}
-                {numeroDaQuestao === 2 && <View>
-                    <Subheading style={style.pergunta}>{questoes[numerosSorteados[1]].pergunta}</Subheading>
-                    <Button
-                        style={style.botao}
-                        mode="contained"
-                        onPress={() => {
-                            setRespostas(resposta => [...resposta, 0])
-                            setProgresso(progresso+0.1)
-                            setNumeroDaQuestao(numeroDaQuestao+1)
-                            sortearQuestoes()
-                        }}
-                    >{questoes[numerosSorteados[1]].resposta[0]}</Button>
-                    <Button
-                        style={style.botao}
-                        mode="contained"
-                        onPress={() => {
-                            setRespostas(resposta => [...resposta, 1])
-                            setProgresso(progresso+0.1)
-                            setNumeroDaQuestao(numeroDaQuestao+1)
-                            sortearQuestoes()
-                        }}
-                    >{questoes[numerosSorteados[1]].resposta[1]}</Button>
-                    {questoes[numerosSorteados[1]].resposta.length > 2 && <View>
-                        <Button
-                            style={style.botao}
-                            mode="contained"
-                            onPress={() => {
-                                setRespostas(resposta => [...resposta, 2])
-                                setProgresso(progresso+0.1)
-                                setNumeroDaQuestao(numeroDaQuestao+1)
-                                sortearQuestoes()
-                            }}
-                        >{questoes[numerosSorteados[1]].resposta[2]}</Button>
-                        <Button
-                            style={style.botao}
-                            mode="contained"
-                            onPress={() => {
-                                setRespostas(resposta => [...resposta, 3])
-                                setProgresso(progresso+0.1)
-                                setNumeroDaQuestao(numeroDaQuestao+1)
-                                sortearQuestoes()
-                            }}
-                        >{questoes[numerosSorteados[1]].resposta[3]}</Button>
-                    </View>}
-                </View>}
-                {numeroDaQuestao === 3 && <View>
-                    <Subheading style={style.pergunta}>{questoes[numerosSorteados[2]].pergunta}</Subheading>
-                    <Button
-                        style={style.botao}
-                        mode="contained"
-                        onPress={() => {
-                            setRespostas(resposta => [...resposta, 0])
-                            setProgresso(progresso+0.1)
-                            setNumeroDaQuestao(numeroDaQuestao+1)
-                            sortearQuestoes()
-                        }}
-                    >{questoes[numerosSorteados[2]].resposta[0]}</Button>
-                    <Button
-                        style={style.botao}
-                        mode="contained"
-                        onPress={() => {
-                            setRespostas(resposta => [...resposta, 1])
-                            setProgresso(progresso+0.1)
-                            setNumeroDaQuestao(numeroDaQuestao+1)
-                            sortearQuestoes()
-                        }}
-                    >{questoes[numerosSorteados[2]].resposta[1]}</Button>
-                    {questoes[numerosSorteados[2]].resposta.length > 2 && <View>
-                        <Button
-                            style={style.botao}
-                            mode="contained"
-                            onPress={() => {
-                                setRespostas(resposta => [...resposta, 2])
-                                setProgresso(progresso+0.1)
-                                setNumeroDaQuestao(numeroDaQuestao+1)
-                                sortearQuestoes()
-                            }}
-                        >{questoes[numerosSorteados[2]].resposta[2]}</Button>
-                        <Button
-                            style={style.botao}
-                            mode="contained"
-                            onPress={() => {
-                                setRespostas(resposta => [...resposta, 3])
-                                setProgresso(progresso+0.1)
-                                setNumeroDaQuestao(numeroDaQuestao+1)
-                                sortearQuestoes()
-                            }}
-                        >{questoes[numerosSorteados[2]].resposta[3]}</Button>
-                    </View>}
-                </View>}
-                {numeroDaQuestao === 4 && <View>
-                    <Subheading style={style.pergunta}>{questoes[numerosSorteados[3]].pergunta}</Subheading>
-                    <Button
-                        style={style.botao}
-                        mode="contained"
-                        onPress={() => {
-                            setRespostas(resposta => [...resposta, 0])
-                            setProgresso(progresso+0.1)
-                            setNumeroDaQuestao(numeroDaQuestao+1)
-                            sortearQuestoes()
-                        }}
-                    >{questoes[numerosSorteados[3]].resposta[0]}</Button>
-                    <Button
-                        style={style.botao}
-                        mode="contained"
-                        onPress={() => {
-                            setRespostas(resposta => [...resposta, 1])
-                            setProgresso(progresso+0.1)
-                            setNumeroDaQuestao(numeroDaQuestao+1)
-                            sortearQuestoes()
-                        }}
-                        >{questoes[numerosSorteados[3]].resposta[1]}</Button>
-                    {questoes[numerosSorteados[3]].resposta.length > 2 && <View>
-                        <Button
-                            style={style.botao}
-                            mode="contained"
-                            onPress={() => {
-                                setRespostas(resposta => [...resposta, 2])
-                                setProgresso(progresso+0.1)
-                                setNumeroDaQuestao(numeroDaQuestao+1)
-                                sortearQuestoes()
-                            }}
-                        >{questoes[numerosSorteados[3]].resposta[2]}</Button>
-                        <Button
-                            style={style.botao}
-                            mode="contained"
-                            onPress={() => {
-                                setRespostas(resposta => [...resposta, 3])
-                                setProgresso(progresso+0.1)
-                                setNumeroDaQuestao(numeroDaQuestao+1)
-                                sortearQuestoes()
-                            }}
-                        >{questoes[numerosSorteados[3]].resposta[3]}</Button>
-                    </View>}
-                </View>}
-                {numeroDaQuestao === 5 && <View>
-                    <Subheading style={style.pergunta}>{questoes[numerosSorteados[4]].pergunta}</Subheading>
-                    <Button
-                        style={style.botao}
-                        mode="contained"
-                        onPress={() => {
-                            setRespostas(resposta => [...resposta, 0])
-                            setProgresso(progresso+0.1)
-                            setNumeroDaQuestao(numeroDaQuestao+1)
-                            sortearQuestoes()
-                        }}
-                    >{questoes[numerosSorteados[4]].resposta[0]}</Button>
-                    <Button
-                        style={style.botao}
-                        mode="contained"
-                        onPress={() => {
-                            setRespostas(resposta => [...resposta, 1])
-                            setProgresso(progresso+0.1)
-                            setNumeroDaQuestao(numeroDaQuestao+1)
-                            sortearQuestoes()
-                        }}
-                        >{questoes[numerosSorteados[4]].resposta[1]}</Button>
-                    {questoes[numerosSorteados[4]].resposta.length > 2 && <View>
-                        <Button
-                            style={style.botao}
-                            mode="contained"
-                            onPress={() => {
-                                setRespostas(resposta => [...resposta, 2])
-                                setProgresso(progresso+0.1)
-                                setNumeroDaQuestao(numeroDaQuestao+1)
-                                sortearQuestoes()
-                            }}
-                        >{questoes[numerosSorteados[4]].resposta[2]}</Button>
-                        <Button
-                            style={style.botao}
-                            mode="contained"
-                            onPress={() => {
-                                setRespostas(resposta => [...resposta, 3])
-                                setProgresso(progresso+0.1)
-                                setNumeroDaQuestao(numeroDaQuestao+1)
-                                sortearQuestoes()
-                            }}
-                        >{questoes[numerosSorteados[4]].resposta[3]}</Button>
-                    </View>}
-                </View>}
-                {numeroDaQuestao === 6 && <View>
-                    <Subheading style={style.pergunta}>{questoes[numerosSorteados[5]].pergunta}</Subheading>
-                    <Button
-                        style={style.botao}
-                        mode="contained"
-                        onPress={() => {
-                            setRespostas(resposta => [...resposta, 0])
-                            setProgresso(progresso+0.1)
-                            setNumeroDaQuestao(numeroDaQuestao+1)
-                            sortearQuestoes()
-                        }}
-                    >{questoes[numerosSorteados[5]].resposta[0]}</Button>
-                    <Button
-                        style={style.botao}
-                        mode="contained"
-                        onPress={() => {
-                            setRespostas(resposta => [...resposta, 1])
-                            setProgresso(progresso+0.1)
-                            setNumeroDaQuestao(numeroDaQuestao+1)
-                            sortearQuestoes()
-                        }}
-                        >{questoes[numerosSorteados[5]].resposta[1]}</Button>
-                    {questoes[numerosSorteados[5]].resposta.length > 2 && <View>
-                        <Button
-                            style={style.botao}
-                            mode="contained"
-                            onPress={() => {
-                                setRespostas(resposta => [...resposta, 2])
-                                setProgresso(progresso+0.1)
-                                setNumeroDaQuestao(numeroDaQuestao+1)
-                                sortearQuestoes()
-                            }}
-                        >{questoes[numerosSorteados[5]].resposta[2]}</Button>
-                        <Button
-                            style={style.botao}
-                            mode="contained"
-                            onPress={() => {
-                                setRespostas(resposta => [...resposta, 3])
-                                setProgresso(progresso+0.1)
-                                setNumeroDaQuestao(numeroDaQuestao+1)
-                                sortearQuestoes()
-                            }}
-                        >{questoes[numerosSorteados[5]].resposta[3]}</Button>
-                    </View>}
-                </View>}
-                {numeroDaQuestao === 7 && <View>
-                    <Subheading style={style.pergunta}>{questoes[numerosSorteados[6]].pergunta}</Subheading>
-                    <Button
-                        style={style.botao}
-                        mode="contained"
-                        onPress={() => {
-                            setRespostas(resposta => [...resposta, 0])
-                            setProgresso(progresso+0.1)
-                            setNumeroDaQuestao(numeroDaQuestao+1)
-                            sortearQuestoes()
-                        }}
-                    >{questoes[numerosSorteados[6]].resposta[0]}</Button>
-                    <Button
-                        style={style.botao}
-                        mode="contained"
-                        onPress={() => {
-                            setRespostas(resposta => [...resposta, 1])
-                            setProgresso(progresso+0.1)
-                            setNumeroDaQuestao(numeroDaQuestao+1)
-                            sortearQuestoes()
-                        }}
-                        >{questoes[numerosSorteados[6]].resposta[1]}</Button>
-                    {questoes[numerosSorteados[6]].resposta.length > 2 && <View>
-                        <Button
-                            style={style.botao}
-                            mode="contained"
-                            onPress={() => {
-                                setRespostas(resposta => [...resposta, 2])
-                                setProgresso(progresso+0.1)
-                                setNumeroDaQuestao(numeroDaQuestao+1)
-                                sortearQuestoes()
-                            }}
-                        >{questoes[numerosSorteados[6]].resposta[2]}</Button>
-                        <Button
-                            style={style.botao}
-                            mode="contained"
-                            onPress={() => {
-                                setRespostas(resposta => [...resposta, 3])
-                                setProgresso(progresso+0.1)
-                                setNumeroDaQuestao(numeroDaQuestao+1)
-                                sortearQuestoes()
-                            }}
-                        >{questoes[numerosSorteados[6]].resposta[3]}</Button>
-                    </View>}
-                </View>}
-                {numeroDaQuestao === 8 && <View>
-                    <Subheading style={style.pergunta}>{questoes[numerosSorteados[7]].pergunta}</Subheading>
-                    <Button
-                        style={style.botao}
-                        mode="contained"
-                        onPress={() => {
-                            setRespostas(resposta => [...resposta, 0])
-                            setProgresso(progresso+0.1)
-                            setNumeroDaQuestao(numeroDaQuestao+1)
-                            sortearQuestoes()
-                        }}
-                    >{questoes[numerosSorteados[7]].resposta[0]}</Button>
-                    <Button
-                        style={style.botao}
-                        mode="contained"
-                        onPress={() => {
-                            setRespostas(resposta => [...resposta, 1])
-                            setProgresso(progresso+0.1)
-                            setNumeroDaQuestao(numeroDaQuestao+1)
-                            sortearQuestoes()
-                        }}
-                        >{questoes[numerosSorteados[7]].resposta[1]}</Button>
-                    {questoes[numerosSorteados[7]].resposta.length > 2 && <View>
-                        <Button
-                            style={style.botao}
-                            mode="contained"
-                            onPress={() => {
-                                setRespostas(resposta => [...resposta, 2])
-                                setProgresso(progresso+0.1)
-                                setNumeroDaQuestao(numeroDaQuestao+1)
-                                sortearQuestoes()
-                            }}
-                        >{questoes[numerosSorteados[7]].resposta[2]}</Button>
-                        <Button
-                            style={style.botao}
-                            mode="contained"
-                            onPress={() => {
-                                setRespostas(resposta => [...resposta, 3])
-                                setProgresso(progresso+0.1)
-                                setNumeroDaQuestao(numeroDaQuestao+1)
-                                sortearQuestoes()
-                            }}
-                        >{questoes[numerosSorteados[7]].resposta[3]}</Button>
-                    </View>}
-                </View>}
-                {numeroDaQuestao === 9 && <View>
-                    <Subheading style={style.pergunta}>{questoes[numerosSorteados[8]].pergunta}</Subheading>
-                    <Button
-                        style={style.botao}
-                        mode="contained"
-                        onPress={() => {
-                            setRespostas(resposta => [...resposta, 0])
-                            setProgresso(progresso+0.1)
-                            setNumeroDaQuestao(numeroDaQuestao+1)
-                            sortearQuestoes()
-                        }}
-                    >{questoes[numerosSorteados[8]].resposta[0]}</Button>
-                    <Button
-                        style={style.botao}
-                        mode="contained"
-                        onPress={() => {
-                            setRespostas(resposta => [...resposta, 1])
-                            setProgresso(progresso+0.1)
-                            setNumeroDaQuestao(numeroDaQuestao+1)
-                            sortearQuestoes()
-                        }}
-                        >{questoes[numerosSorteados[8]].resposta[1]}</Button>
-                    {questoes[numerosSorteados[8]].resposta.length > 2 && <View>
-                        <Button
-                            style={style.botao}
-                            mode="contained"
-                            onPress={() => {
-                                setRespostas(resposta => [...resposta, 2])
-                                setProgresso(progresso+0.1)
-                                setNumeroDaQuestao(numeroDaQuestao+1)
-                                sortearQuestoes()
-                            }}
-                        >{questoes[numerosSorteados[8]].resposta[2]}</Button>
-                        <Button
-                            style={style.botao}
-                            mode="contained"
-                            onPress={() => {
-                                setRespostas(resposta => [...resposta, 3])
-                                setProgresso(progresso+0.1)
-                                setNumeroDaQuestao(numeroDaQuestao+1)
-                                sortearQuestoes()
-                            }}
-                        >{questoes[numerosSorteados[8]].resposta[3]}</Button>
-                    </View>}
-                </View>}
-                {numeroDaQuestao === 10 && <View>
-                    <Subheading style={style.pergunta}>{questoes[numerosSorteados[9]].pergunta}</Subheading>
-                    <Button
-                        style={style.botao}
-                        mode="contained"
-                        onPress={() => {
-                            setRespostas(resposta => [...resposta, 0])
-                            setResposta10(0)
-                            setProgresso(progresso+0.1)
-                        }}
-                        >{questoes[numerosSorteados[9]].resposta[0]}</Button>
-                    <Button
-                        style={style.botao}
-                        mode="contained"
-                        onPress={() => {
-                            setRespostas(resposta => [...resposta, 1])
-                            setResposta10(1)
-                            setProgresso(progresso+0.1)
-                        }}
-                        >{questoes[numerosSorteados[9]].resposta[1]}</Button>
-                    {questoes[numerosSorteados[9]].resposta.length > 2 && <View>
-                        <Button
-                            style={style.botao}
-                            mode="contained"
-                            onPress={() => {
-                                setRespostas(resposta => [...resposta, 2])
-                                setResposta10(1)
-                                setProgresso(progresso+0.1)
-                            }}
-                        >{questoes[numerosSorteados[9]].resposta[2]}</Button>
-                        <Button
-                            style={style.botao}
-                            mode="contained"
-                            onPress={() => {
-                                setRespostas(resposta => [...resposta, 3])
-                                setResposta10(1)
-                                setProgresso(progresso+0.1)
-                            }}
-                        >{questoes[numerosSorteados[9]].resposta[3]}</Button>
-                    </View>}
-                </View>}
-                {progresso > 1.0 && <Resultado navigation={{navigation, respostas, resposta10, questoes, numerosSorteados}} />}
+                    >{questaoAtual.resposta[3]}</Button>
+                </View>
+
+                }
+
+                {progresso > 1.0 && <Resultado navigation={{ navigation, respostas, resposta10, questoes, numerosSorteados }} />}
             </Card.Content>
         </Card>
     )
@@ -602,13 +211,14 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         opacity: 5,
         borderRadius: 20,
-        shadowColor: 'red',
+        shadowColor: '#9e9',
     },
     botao: {
+        color: 'black',
         margin: 10,
         elevation: 200,
-        shadowColor: '#ff4800',
         backfaceVisibility: 'hidden',
+        shadowColor: '#9e9',
         borderRadius: 5
     },
     pergunta: {

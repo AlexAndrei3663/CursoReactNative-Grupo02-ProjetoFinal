@@ -113,7 +113,7 @@ const style = StyleSheet.create({
         height: 40,
     },
     dialogo: {
-        backgroundColor: 'orange',
+        backgroundColor: 'wheat',
         maxHeight: 700,
         borderRadius: 10
     },
